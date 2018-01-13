@@ -1,4 +1,4 @@
-# ArduinoCIS 
+# ArduinoCIS (Controller Interactive System) 
 ![](https://github.com/ToonAutomation/ArduinoCIS/blob/master/LogoJoin.jpg?raw=true)
 
 
