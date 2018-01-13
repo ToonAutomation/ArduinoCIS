@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "ProtocolEx.h"
+#include <ProtocolEx.h>
 
 #define Node 2
 ProtocolEx Ex;
