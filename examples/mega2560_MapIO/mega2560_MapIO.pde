@@ -114,6 +114,25 @@ void loop()
    Ex.I[15] = analogRead(A13);   // Address I15
    Ex.I[16] = analogRead(A14);   // Address I16
    Ex.I[17] = analogRead(A15);   // Address I17
+   
+    // Example Mapping Digital Output
+   digitalWrite(13,GetBit(Ex.Q[0],0));    // Address Q0.0
+   digitalWrite(12,GetBit(Ex.Q[0],1));    // Address Q0.1
+   digitalWrite(11,GetBit(Ex.Q[0],2));    // Address Q0.2
+   digitalWrite(10,GetBit(Ex.Q[0],3));    // Address Q0.3
+   digitalWrite(9,GetBit(Ex.Q[0],4));    // Address Q0.4
+   digitalWrite(8,GetBit(Ex.Q[0],5));    // Address Q0.5
+   digitalWrite(7,GetBit(Ex.Q[0],6));    // Address Q0.6
+   digitalWrite(6,GetBit(Ex.Q[0],7));    // Address Q0.7
+   digitalWrite(5,GetBit(Ex.Q[0],8));    // Address Q0.8
+   digitalWrite(4,GetBit(Ex.Q[0],9));    // Address Q0.9
+   digitalWrite(3,GetBit(Ex.Q[0],10));    // Address Q0.10
+   digitalWrite(2,GetBit(Ex.Q[0],11));    // Address Q0.11
+   digitalWrite(22,GetBit(Ex.Q[0],12));    // Address Q0.12
+   digitalWrite(23,GetBit(Ex.Q[0],13));    // Address Q0.13
+   digitalWrite(24,GetBit(Ex.Q[0],14));    // Address Q0.14
+   digitalWrite(25,GetBit(Ex.Q[0],15));    // Address Q0.15
+   
 
    // Example Mapping Float Data
    Ex.Float[0] = ((float)Ex.I[2]/1023)*5 ; // Address Float0
