@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <ProtocolEx.h>
+#include <ProtocolEX.h>
 
 #define Node 2
 ProtocolEx Ex;
@@ -29,6 +29,8 @@ void setup()
     pinMode(23,OUTPUT);
     pinMode(24,OUTPUT);
     pinMode(25,OUTPUT);
+
+   
    
     //Setpin 26 - 53 is INPUT
     pinMode(26,INPUT);
@@ -66,6 +68,25 @@ void setup()
 
 void loop() 
 {
+    
+      // Example Mapping Digital Output
+    digitalWrite(13,GetBit(Ex.Q[0],0));    // Address Q0.0
+    digitalWrite(12,GetBit(Ex.Q[0],1));    // Address Q0.1
+    digitalWrite(11,GetBit(Ex.Q[0],2));    // Address Q0.2
+    digitalWrite(10,GetBit(Ex.Q[0],3));    // Address Q0.3
+    digitalWrite(9,GetBit(Ex.Q[0],4));    // Address Q0.4
+    digitalWrite(8,GetBit(Ex.Q[0],5));    // Address Q0.5
+    digitalWrite(7,GetBit(Ex.Q[0],6));    // Address Q0.6
+    digitalWrite(6,GetBit(Ex.Q[0],7));    // Address Q0.7
+    digitalWrite(5,GetBit(Ex.Q[0],8));    // Address Q0.8
+    digitalWrite(4,GetBit(Ex.Q[0],9));    // Address Q0.9
+    digitalWrite(3,GetBit(Ex.Q[0],10));    // Address Q0.10
+    digitalWrite(2,GetBit(Ex.Q[0],11));    // Address Q0.11
+    digitalWrite(22,GetBit(Ex.Q[0],12));    // Address Q0.12
+    digitalWrite(23,GetBit(Ex.Q[0],13));    // Address Q0.13
+    digitalWrite(24,GetBit(Ex.Q[0],14));    // Address Q0.14
+    digitalWrite(25,GetBit(Ex.Q[0],15));    // Address Q0.15
+
    // Example Mapping Digital Input     
    MovBit(Ex.I[0],0,digitalRead(26)); // Address I0.0
    MovBit(Ex.I[0],1,digitalRead(27)); // Address I0.1
@@ -96,7 +117,9 @@ void loop()
    MovBit(Ex.I[1],9,digitalRead(51)); // Address I1.9
    MovBit(Ex.I[1],10,digitalRead(52)); // Address I1.10
    MovBit(Ex.I[1],11,digitalRead(53)); // Address I1.11
-   
+
+
+ 
    // Example Mapping Analog Input
    Ex.I[2] = analogRead(A0);   // Address I2
    Ex.I[3] = analogRead(A1);   // Address I3
@@ -112,56 +135,38 @@ void loop()
    Ex.I[13] = analogRead(A11);   // Address I13
    Ex.I[14] = analogRead(A12);   // Address I14
    Ex.I[15] = analogRead(A13);   // Address I15
-   Ex.I[16] = analogRead(A14);   // Address I16
-   Ex.I[17] = analogRead(A15);   // Address I17
+     
    
-    // Example Mapping Digital Output
-   digitalWrite(13,GetBit(Ex.Q[0],0));    // Address Q0.0
-   digitalWrite(12,GetBit(Ex.Q[0],1));    // Address Q0.1
-   digitalWrite(11,GetBit(Ex.Q[0],2));    // Address Q0.2
-   digitalWrite(10,GetBit(Ex.Q[0],3));    // Address Q0.3
-   digitalWrite(9,GetBit(Ex.Q[0],4));    // Address Q0.4
-   digitalWrite(8,GetBit(Ex.Q[0],5));    // Address Q0.5
-   digitalWrite(7,GetBit(Ex.Q[0],6));    // Address Q0.6
-   digitalWrite(6,GetBit(Ex.Q[0],7));    // Address Q0.7
-   digitalWrite(5,GetBit(Ex.Q[0],8));    // Address Q0.8
-   digitalWrite(4,GetBit(Ex.Q[0],9));    // Address Q0.9
-   digitalWrite(3,GetBit(Ex.Q[0],10));    // Address Q0.10
-   digitalWrite(2,GetBit(Ex.Q[0],11));    // Address Q0.11
-   digitalWrite(22,GetBit(Ex.Q[0],12));    // Address Q0.12
-   digitalWrite(23,GetBit(Ex.Q[0],13));    // Address Q0.13
-   digitalWrite(24,GetBit(Ex.Q[0],14));    // Address Q0.14
-   digitalWrite(25,GetBit(Ex.Q[0],15));    // Address Q0.15
-   
-
-   // Example Mapping Float Data
-   Ex.Float[0] = ((float)Ex.I[2]/1023)*5 ; // Address Float0
-   Ex.Float[1] = ((float)Ex.I[3]/1023)*5 ; // Address Float1
-   Ex.Float[2] = ((float)Ex.I[4]/1023)*5 ; // Address Float2
-   Ex.Float[3] = ((float)Ex.I[5]/1023)*5 ; // Address Float3
-   Ex.Float[4] = ((float)Ex.I[6]/1023)*5 ; // Address Float4
-   Ex.Float[5] = ((float)Ex.I[7]/1023)*5 ; // Address Float5
-   Ex.Float[6] = ((float)Ex.I[8]/1023)*5 ; // Address Float6
-   Ex.Float[7] = ((float)Ex.I[9]/1023)*5 ; // Address Float7
-   Ex.Float[8] = ((float)Ex.I[10]/1023)*5 ; // Address Float8
-   Ex.Float[9] = ((float)Ex.I[11]/1023)*5 ; // Address Float9
-   Ex.Float[10] = ((float)Ex.I[12]/1023)*5 ; // Address Float10
-   Ex.Float[11] = ((float)Ex.I[13]/1023)*5 ; // Address Float11
-   Ex.Float[12] = ((float)Ex.I[14]/1023)*5 ; // Address Float12
-   Ex.Float[13] = ((float)Ex.I[15]/1023)*5 ; // Address Float13
+        // Example Mapping Float Data
+        Ex.Float[0] = ((float)Ex.I[2]/1023)*5 ; // Address Float0
+        Ex.Float[1] = ((float)Ex.I[3]/1023)*5 ; // Address Float1
+        Ex.Float[2] = ((float)Ex.I[4]/1023)*5 ; // Address Float2
+        Ex.Float[3] = ((float)Ex.I[5]/1023)*5 ; // Address Float3
+        Ex.Float[4] = ((float)Ex.I[6]/1023)*5 ; // Address Float4
+        Ex.Float[5] = ((float)Ex.I[7]/1023)*5 ; // Address Float5
+        Ex.Float[6] = ((float)Ex.I[8]/1023)*5 ; // Address Float6
+        Ex.Float[7] = ((float)Ex.I[9]/1023)*5 ; // Address Float7
+        Ex.Float[8] = ((float)Ex.I[10]/1023)*5 ; // Address Float8
+        Ex.Float[9] = ((float)Ex.I[11]/1023)*5 ; // Address Float9
+        Ex.Float[10] = ((float)Ex.I[12]/1023)*5 ; // Address Float10
+        Ex.Float[11] = ((float)Ex.I[13]/1023)*5 ; // Address Float11
+        Ex.Float[12] = ((float)Ex.I[14]/1023)*5 ; // Address Float12
+        Ex.Float[13] = ((float)Ex.I[15]/1023)*5 ; // Address Float13
 
    //Example Mapping String 
    Ex.FillText(0,"Arduino Mega2560"); // Address text0
    Ex.FillText(1,"CIS Design"); // Address text1
    Ex.FillText(2,"ArduinoTechs"); // Address text2 
 
+   
+  
+
    // Wait Recive and Send Data Between Host
-   if( Ex.ScanLoop() == true)
+   Ex.ScanLoop();
+
+   if(Ex.Connect)
    {
-        // ScanLoop Exchange Data Between host ok
-        // dosomething();
+       
    }
 
 }
-
-
