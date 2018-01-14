@@ -18,8 +18,8 @@
 #define MovWord(Src,Des) Src = Des
 #define MovBit(reg,bit,state) (state)? SetBit(reg,bit) : ClearBit(reg,bit)
 #define GetBit(reg,bit) (reg>>bit)&0x01
-#define SetBit(reg,bit) reg=reg|(1<<bit)
-#define ClearBit(reg,bit) reg = reg&(~(1<<bit))
+#define SetBit(reg,bit) reg |= (1<<bit)
+#define ClearBit(reg,bit) reg &= ~(1<<bit)
 #define MovData(reg1,reg2) reg1 = reg2
 #define InRange(Data,Rmin,Rmax) ((Data<=Rmax)&&(Data>Rmin))? true : false 
 //#define ClearBit()
@@ -37,6 +37,7 @@ enum EXType
 enum command
 {
     Eof = 3,
+    DataError = 237,
     GetTiming = 238,
     GetDev = 239,
     Write_Word = 240,
@@ -65,7 +66,7 @@ class ProtocolEx
         void Begin(byte Station,Stream &Hardware);
         void SetDeviceName(String DevName){ DeviceName = DevName; };
         String GetDevName(){return DeviceName;}
-        bool ScanLoop();
+        void ScanLoop();
     private:
 
         union ByteConverse
@@ -88,16 +89,17 @@ class ProtocolEx
         char Str[String_Size][Ascii_Size];
         unsigned int Diag[Diagnostics_Size];
         void FillText(byte Address,String Message);
+        bool Connect;
     private:
         String DeviceName;
         Stream *Uart ;
         byte Sta ;
         void flush();
         void WriteW(EXType T,int Addr,byte NumberWrite,byte *Data);
-        void WriteB(EXType T,int Addr,byte Bitn,bool Data);
+        void WriteB(EXType T,int Addr,byte Bitn,byte Data);
         void ReadW(EXType T,int Addr ,byte Number);
         void GetSize();
         void WriteCode(command cmd);
         unsigned long TimingProcess ;
-        bool ConnectToPC;
+        
 };
