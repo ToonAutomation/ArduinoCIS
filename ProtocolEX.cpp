@@ -1,4 +1,3 @@
-
 #include "ProtocolEx.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,16 +10,21 @@ void ProtocolEx::Begin(byte Station,Stream &Hardware)
 }
 
 
-bool ProtocolEx::ScanLoop()
+void ProtocolEx::ScanLoop()
 { 
-    ConnectToPC = false ;
+    Connect = false ;
     int BufferIn = Uart->available();
-    if(BufferIn <= 0) return false ;
+    if(BufferIn <= 0) return ;
     flush();
     delay(50);
+    
+/*************************************************/
+     TimingProcess = millis() - TimingProcess;
+/*************************************************/
+    
     int CountByte = Uart->available();
 
-    if(CountByte <= 0) return false;
+    if(CountByte <= 0) return ;
 
     if(CountByte > 0)
     {
@@ -30,36 +34,46 @@ bool ProtocolEx::ScanLoop()
     /*************************************************/
     
     // Check Node
-    if(RX[0] != Header) return false;
-    if(RX[1] != Sta) return false ;
+    if(RX[0] != Header) return ;
+    if(RX[1] != Sta) return ;
 
     switch(RX[2])
     {
         case RequestFromServer :
-            WriteCode(NormalStatus);
-            ConnectToPC = true ;
+            WriteCode(Eof);
+            Connect = true ;
         break;
         case Read_Word :
            // ReadW(EXType T,int Addr ,byte Number);
            ReadW((EXType)RX[3],(RX[4]<<8)|(RX[5]),RX[6]);
-           ConnectToPC = true ;
+           Connect = true ;
         break;
         case Write_Word:
             WriteW((EXType)RX[3],(RX[4]<<8)|(RX[5]),RX[6],&RX[7]);
-            ConnectToPC = true ;
+            Connect = true ;
         break;
         case Write_Bit:
+            /*
+                Byte0 = Header
+                Byte1 = Station
+                Byte2 = Command
+                Byte3 = Extype
+                Byte4 = Address HI
+                Byte5 = Address LO
+                Byte6 = Bit 0-15
+                Byte7 = Data 
+            */
             WriteB((EXType)RX[3],(RX[4]<<8)|(RX[5]),RX[6],RX[7]&1);
-            ConnectToPC = true ;
+            Connect = true ;
         break;
         case SizeOptimize:
             GetSize();
-            ConnectToPC = true ;
+            Connect = true ;
         case GetDev :
              Uart->write((byte)Header);
              Uart->write((byte)Sta);
              Uart->print(DeviceName);
-             ConnectToPC = true ;
+             Connect = true ;
         break;
         case GetTiming :
             TypeConvert.Getlong = TimingProcess;
@@ -69,14 +83,11 @@ bool ProtocolEx::ScanLoop()
             Uart->write(TypeConvert.SetByte[1]);
             Uart->write(TypeConvert.SetByte[2]);
             Uart->write(TypeConvert.SetByte[3]);
-            ConnectToPC = true ;
+            Connect = true ;
         break;
     }
 
-/*************************************************/
-     TimingProcess = millis() - TimingProcess;
-/*************************************************/
-    return ConnectToPC;
+    return ;
 }
    
 void ProtocolEx::flush()
@@ -118,7 +129,6 @@ void ProtocolEx::WriteW(EXType T,int Addr,byte NumberWrite,byte *Data)
                          Data+=2;
                          n+=1;
                     }
-                    WriteCode(NormalStatus);
                     return;
                 break;
                 case INT :
@@ -226,7 +236,7 @@ void ProtocolEx::WriteW(EXType T,int Addr,byte NumberWrite,byte *Data)
 
 }
 
-void ProtocolEx::WriteB(EXType T,int Addr,byte Bitn,bool Data)
+void ProtocolEx::WriteB(EXType T,int Addr,byte Bitn,byte Data)
 {
 
             if((Bitn < -1)||(Bitn  > 15))
@@ -248,8 +258,26 @@ void ProtocolEx::WriteB(EXType T,int Addr,byte Bitn,bool Data)
                         return;
                     }
 
-                    MovBit(Q[Addr],Bitn,Data);
-                    WriteCode(NormalStatus);
+                  //  MovBit(Q[Addr],Bitn,Data);
+                    
+                    if(Data == 1)
+                    {
+                        Q[Addr] = Q[Addr]|(unsigned int)(1<<Bitn); 
+                        WriteCode(Eof); 
+                        return;                
+                    }
+                    else if(Data == 0)
+                    {
+                        Q[Addr] = Q[Addr]&(unsigned int)(~(1<<Bitn));
+                        WriteCode(Eof);
+                        return;
+                    }
+                    else
+                    {
+                        WriteCode(DataError);
+                        return;
+                    }
+
                     return;
                 break;
                 case INT :
@@ -259,8 +287,23 @@ void ProtocolEx::WriteB(EXType T,int Addr,byte Bitn,bool Data)
                         return;
                     }
 
-                        MovBit(Int[Addr],Bitn,Data);
-                        WriteCode(NormalStatus);
+                     if(Data == 1)
+                    {
+                        Int[Addr] = Int[Addr]|(unsigned int)(1<<Bitn); 
+                        WriteCode(Eof);
+                        return;
+                    }
+                    else if(Data == 0)
+                    {
+                        Int[Addr] = Int[Addr]&(unsigned int)(~(1<<Bitn));
+                        WriteCode(Eof);
+                        return;
+                    }
+                    else
+                    {
+                        WriteCode(DataError);
+                    }
+
                         return;
                 break;
                 case UINT :
@@ -269,15 +312,24 @@ void ProtocolEx::WriteB(EXType T,int Addr,byte Bitn,bool Data)
                         WriteCode(SizeOverFlow);
                         return;
                     }
-                        MovBit(UInt[Addr],Bitn,Data);
-                        WriteCode(NormalStatus);
+
+                    if(Data == 1)
+                    {
+                        UInt[Addr] = UInt[Addr]|(unsigned int)(1<<Bitn); 
+                        WriteCode(Eof);
                         return;
-                break;
-                case FLOAT :
-                        WriteCode(AddressNotSupprt);
-                break;
-                case STRING :
-                        WriteCode(AddressNotSupprt);
+                    }
+                    else if(Data == 0)
+                    {
+                        UInt[Addr] = UInt[Addr]&(unsigned int)(~(1<<Bitn));
+                        WriteCode(Eof);
+                        return;
+                    }
+                    else
+                    {
+                        WriteCode(DataError);
+                    }
+                       return;
                 break;
                 case DIAGNOSTICS :
                     
@@ -287,9 +339,22 @@ void ProtocolEx::WriteB(EXType T,int Addr,byte Bitn,bool Data)
                         return;
                     }
 
-                    MovBit(Diag[Addr],Bitn,Data);
-
-                    WriteCode(NormalStatus);
+                    if(Data == 1)
+                    {
+                        Diag[Addr] = Diag[Addr]|(unsigned int)(1<<Bitn); 
+                        WriteCode(Eof);
+                        return;
+                    }
+                    else if(Data == 0)
+                    {
+                        Diag[Addr] = Diag[Addr]&(unsigned int)(~(1<<Bitn));
+                        WriteCode(Eof);
+                        return;
+                    }
+                    else
+                    {
+                        WriteCode(DataError);
+                    }
                     return;
                 break;
                 default :        
