@@ -70,9 +70,11 @@ void loop()
    Ex.FillText(2,"ArduinoTechs"); // Address text2 
 
    // Wait Recive and Send Data Between Host
-   if( Ex.ScanLoop() == true)
+   Ex.ScanLoop();
+    
+     if(Ex.Connect)
    {
-        // ScanLoop Exchange Data Between host ok
+         // ScanLoop Exchange Data Between host ok
         // dosomething();
    }
 
